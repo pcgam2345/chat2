@@ -240,10 +240,10 @@ export const Conversational = (): JSX.Element => {
           <button
             type="submit"
             disabled={isInputDisabled || !inputValue.trim()}
-            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 flex items-center justify-center"
             aria-label="Send message"
           >
-            <div className="relative w-5 h-5 top-3 left-3 rotate-[180.00deg]">
+            <div className="relative w-5 h-5 rotate-[180.00deg]">
               <img
                 className="absolute w-2 h-[11px] top-1 left-1.5 rotate-[-180.00deg]"
                 alt=""
@@ -257,14 +257,15 @@ export const Conversational = (): JSX.Element => {
 
       {/* Bottom Navigation */}
       <nav
-        className="flex h-[82px] items-start justify-between px-6 py-0 bg-white border-t [border-top-style:solid] border-[#e6e6e6] flex-shrink-0"
+        className="flex h-[82px] items-center justify-center bg-white border-t [border-top-style:solid] border-[#e6e6e6] flex-shrink-0"
         role="navigation"
         aria-label="Main navigation"
       >
-        {navigationItems.map((item) => (
-          <div key={item.id} className="relative w-[75px] h-[65px] bg-white">
+        <div className="flex items-center justify-between w-full max-w-[300px]">
+          {navigationItems.map((item) => (
+            <div key={item.id} className="relative w-[75px] h-[65px] bg-white flex items-center justify-center">
             {item.id === "home" && (
-              <div className="inline-flex flex-col items-center gap-2.5 relative left-[18px] bg-white">
+              <div className="inline-flex flex-col items-center gap-2.5 relative bg-white">
                 <img
                   className="relative w-10 h-0.5"
                   alt=""
@@ -292,7 +293,7 @@ export const Conversational = (): JSX.Element => {
             )}
 
             {item.id === "lookbook" && (
-              <div className="inline-flex flex-col items-center gap-1.5 relative top-3 left-[15px]">
+              <div className="inline-flex flex-col items-center gap-1.5 relative">
                 <div className="relative w-6 h-6">
                   <div className="relative w-4 h-[19px] top-[3px] left-1">
                     <div className="w-[17px] h-5 relative -top-px -left-px">
@@ -326,7 +327,7 @@ export const Conversational = (): JSX.Element => {
 
             {item.id === "discover" && (
               <div className="relative w-[75px] h-[65px] bg-[url(/img/05.svg)] bg-[100%_100%]">
-                <div className="inline-flex flex-col items-center gap-1.5 relative top-3 left-4">
+                <div className="inline-flex flex-col items-center gap-1.5 absolute inset-0 flex items-center justify-center">
                   <div className="relative w-6 h-6">
                     <img
                       className="absolute w-[19px] h-[19px] top-0.5 left-0.5"
@@ -341,8 +342,9 @@ export const Conversational = (): JSX.Element => {
                 </div>
               </div>
             )}
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </nav>
     </main>
   );

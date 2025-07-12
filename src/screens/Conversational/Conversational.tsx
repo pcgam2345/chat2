@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { ChatMessage } from "../../types/chat";
+import { ChatService } from "../../services/chatService";
+import { ChatBubble } from "../../components/ChatBubble";
+import { TypingIndicator } from "../../components/TypingIndicator";
+import { MessageWithButtons } from "../../components/MessageWithButtons";
+import { MessageWithGallery } from "../../components/MessageWithGallery";
 
 const navigationItems = [
   {
@@ -23,124 +29,143 @@ const navigationItems = [
   },
 ];
 
-const chatMessages = [
-  {
-    id: 1,
-    type: "user",
-    content: "I want outfit ideas for a concert on Saturday night.",
-    timestamp: new Date(),
-  },
-  {
-    id: 2,
-    type: "ai",
-    content:
-      "Hey, that sounds fun! 🎶✨\nI'd love to help you put together something stylish!\nBut first — to recommend the best looks for you, can I get to know your style profile a bit better?",
-    timestamp: new Date(),
-  },
-  {
-    id: 3,
-    type: "user",
-    content: "Okay, sure, I'll answer that.",
-    timestamp: new Date(),
-  },
-  {
-    id: 4,
-    type: "ai",
-    content: "typing",
-    timestamp: new Date(),
-  },
-];
-
 export const Conversational = (): JSX.Element => {
   const [inputValue, setInputValue] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
+  const chatService = useRef(new ChatService());
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const addMessage = (message: Omit<ChatMessage, "id" | "timestamp">) => {
+    const newMessage: ChatMessage = {
+      ...message,
+      id: Date.now().toString(),
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, newMessage]);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputValue.trim()) {
-      // Handle message submission
-      console.log("Sending message:", inputValue);
+    if (inputValue.trim() && !isInputDisabled) {
+      const userMessage = inputValue.trim();
       setInputValue("");
+      setIsInputDisabled(true);
+      setIsTyping(true);
+
+      // Add user message
+      addMessage({
+        type: "user",
+        content: userMessage,
+      });
+
+      try {
+        // Get bot response
+        const response = await chatService.current.sendMessage(userMessage);
+        setIsTyping(false);
+
+        // Add bot message based on response type
+        addMessage({
+          type: "ai",
+          content: response.content,
+          messageType: response.type,
+          buttons: response.buttons,
+          images: response.images,
+        });
+      } catch (error) {
+        setIsTyping(false);
+        addMessage({
+          type: "ai",
+          content: "Sorry, I'm having trouble responding right now. Please try again!",
+        });
+      } finally {
+        setIsInputDisabled(false);
+      }
     }
   };
 
-  const AIAvatar = () => (
-    <div className="relative w-10 h-10 bg-[#e0f3f3] rounded-[83.33px]">
-      <div className="h-10">
-        <div className="w-10 h-10 rounded-[100px] overflow-hidden bg-[linear-gradient(162deg,rgba(198,248,255,1)_0%,rgba(0,122,247,1)_100%)]">
-          <div className="relative w-8 h-8 top-[3px] left-[5px]">
-            <div className="relative w-[27px] h-[26px] top-[3px] left-[3px]">
-              <div className="h-[26px]">
-                <div className="relative w-[27px] h-[26px]">
-                  <div className="absolute w-[22px] h-[25px] top-px left-0">
-                    <div className="relative h-[25px]">
-                      <img
-                        className="absolute w-[22px] h-[19px] top-1.5 left-0"
-                        alt="Vector"
-                        src="/img/vector-2.svg"
-                      />
-                      <img
-                        className="absolute w-[13px] h-2 top-0 left-[5px]"
-                        alt="Group"
-                        src="/img/group-3.png"
-                      />
-                      <div className="absolute w-[11px] h-[13px] top-[9px] left-0.5">
-                        <div className="relative h-[13px]">
-                          <img
-                            className="absolute w-2 h-[13px] top-0 left-0"
-                            alt="Group"
-                            src="/img/group-4.png"
-                          />
-                          <img
-                            className="absolute w-2 h-[13px] top-0 left-[3px]"
-                            alt="Group"
-                            src="/img/group-5.png"
-                          />
-                        </div>
-                      </div>
-                      <img
-                        className="absolute w-1 h-[13px] top-[9px] left-[15px]"
-                        alt="Rectangle"
-                        src="/img/rectangle-35-1.svg"
-                      />
-                      <img
-                        className="absolute w-[5px] h-[13px] top-[9px] left-3.5"
-                        alt="Rectangle stroke"
-                        src="/img/rectangle-35-stroke-1.svg"
-                      />
-                    </div>
-                  </div>
-                  <img
-                    className="absolute w-2 h-2 top-px left-[19px]"
-                    alt="Star"
-                    src="/img/star-3-1.svg"
-                  />
-                  <img
-                    className="absolute w-[3px] h-[3px] top-0 left-[17px]"
-                    alt="Star"
-                    src="/img/star-4-1.svg"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const handleButtonClick = async (action: string) => {
+    setIsInputDisabled(true);
+    setIsTyping(true);
 
-  const TypingIndicator = () => (
-    <div className="inline-flex relative flex-[0_0_auto] bg-grey-50 items-center justify-center px-4 py-3 rounded-2xl">
-      <div className="inline-flex items-center gap-1 relative flex-[0_0_auto]">
-        <div className="relative w-1.5 h-1.5 bg-grey-950 rounded-[3px]" />
-        <div className="relative w-1.5 h-1.5 bg-grey-950 rounded-[3px]" />
-        <div className="relative w-1.5 h-1.5 bg-grey-950 rounded-[3px]" />
-      </div>
-    </div>
-  );
+    try {
+      const response = await chatService.current.handleAction(action);
+      setIsTyping(false);
+
+      addMessage({
+        type: "ai",
+        content: response.content,
+        messageType: response.type,
+        buttons: response.buttons,
+        images: response.images,
+      });
+    } catch (error) {
+      setIsTyping(false);
+      addMessage({
+        type: "ai",
+        content: "Sorry, I'm having trouble with that action. Please try again!",
+      });
+    } finally {
+      setIsInputDisabled(false);
+    }
+  };
+
+  const handleTryNow = (imageId: string) => {
+    console.log("Try Now clicked for image:", imageId);
+    // Add user message showing they selected an outfit
+    addMessage({
+      type: "user",
+      content: "I like this outfit!",
+    });
+
+    // Trigger bot response
+    handleButtonClick("outfit_selected");
+  };
+
+  const renderMessage = (message: ChatMessage, index: number) => {
+    if (message.type === "user") {
+      return <ChatBubble key={message.id} {...message} />;
+    }
+
+    // AI message
+    switch (message.messageType) {
+      case "buttons":
+        return (
+          <MessageWithButtons
+            key={message.id}
+            content={message.content}
+            buttons={message.buttons || []}
+            onButtonClick={handleButtonClick}
+            showAvatar={true}
+          />
+        );
+      case "gallery":
+        return (
+          <MessageWithGallery
+            key={message.id}
+            content={message.content}
+            images={message.images || []}
+            onTryNow={handleTryNow}
+            showAvatar={true}
+          />
+        );
+      default:
+        return <ChatBubble key={message.id} {...message} />;
+    }
+  };
 
   return (
     <main
@@ -279,14 +304,16 @@ export const Conversational = (): JSX.Element => {
               type="text"
               value={inputValue}
               onChange={handleInputChange}
+              disabled={isInputDisabled}
               placeholder="Ask me anything..."
-              className="relative w-fit mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-600 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] whitespace-nowrap [font-style:var(--body-text-body-3-regular-font-style)] bg-transparent border-none outline-none"
+              className="relative w-fit mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-600 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] whitespace-nowrap [font-style:var(--body-text-body-3-regular-font-style)] bg-transparent border-none outline-none disabled:opacity-50"
               aria-label="Type your message"
             />
           </div>
           <button
             type="submit"
-            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px]"
+            disabled={isInputDisabled || !inputValue.trim()}
+            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px] disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Send message"
           >
             <div className="relative w-5 h-5 top-3 left-3 rotate-[180.00deg]">
@@ -302,46 +329,20 @@ export const Conversational = (): JSX.Element => {
       </div>
 
       {/* Chat Messages */}
-      <div className="absolute top-[122px] left-0 w-[375px] px-6 space-y-4">
-        {/* User Message 1 */}
-        <div className="flex justify-end">
-          <div className="flex w-[200px] items-center justify-center px-4 py-3 bg-blue600-primary rounded-2xl">
-            <p className="relative flex-1 mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-basewhite text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
-              I want outfit ideas for a concert on Saturday night.
+      <div className="absolute top-[122px] left-0 w-[375px] h-[517px] overflow-y-auto px-6 space-y-4">
+        {messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-monochrome-600 font-body-text-body-3-regular text-center">
+              Start a conversation by typing a message below! 👋
             </p>
           </div>
-        </div>
-
-        {/* AI Message 1 */}
-        <div className="inline-flex items-end gap-3 mt-8">
-          <AIAvatar />
-          <div className="flex w-[200px] relative bg-grey-50 items-center justify-center px-4 py-3 rounded-2xl">
-            <p className="relative flex-1 mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-900 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
-              Hey, that sounds fun! 🎶✨
-              <br /> I&apos;d love to help you put together something stylish!
-              <br />
-              But first — to recommend the best looks for you, can I get to know
-              your style profile a bit better?
-            </p>
-          </div>
-        </div>
-
-        {/* User Message 2 */}
-        <div className="flex justify-end mt-[155px]">
-          <div className="flex w-[200px] bg-blue600-primary items-center justify-center px-4 py-3 rounded-2xl">
-            <p className="relative flex-1 mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-basewhite text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
-              Okay, sure, I&#39;ll answer that.
-            </p>
-          </div>
-        </div>
-
-        {/* AI Typing Indicator */}
-        <div className="inline-flex items-center gap-3 mt-4">
-          <AIAvatar />
-          <div className="inline-flex flex-col items-start gap-1.5 relative flex-[0_0_auto]">
-            <TypingIndicator />
-          </div>
-        </div>
+        )}
+        
+        {messages.map((message, index) => renderMessage(message, index))}
+        
+        {isTyping && <TypingIndicator />}
+        
+        <div ref={messagesEndRef} />
       </div>
     </main>
   );

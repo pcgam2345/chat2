@@ -169,14 +169,95 @@ export const Conversational = (): JSX.Element => {
 
   return (
     <main
-      className="relative w-[375px] h-[812px] bg-white rounded-[32px] overflow-hidden"
+      className="flex flex-col h-screen w-full bg-white"
       data-model-id="1:42911"
       role="main"
       aria-label="Conversational AI Chat Interface"
     >
+      {/* Header */}
+      <header className="flex flex-col items-start flex-shrink-0">
+        <div className="w-full h-11" />
+        <div className="flex items-center justify-between pt-3 pb-1.5 px-6 w-full">
+          <button
+            className="relative w-10 h-10 rounded-[20px] border border-solid border-[#d9d9d9]"
+            aria-label="Open menu"
+          >
+            <img
+              className="absolute w-6 h-6 top-[7px] left-[7px]"
+              alt=""
+              src="/img/menu-01.svg"
+              aria-hidden="true"
+            />
+          </button>
+          <button
+            className="relative w-10 h-10 rounded-[20px] border border-solid border-[#d9d9d9]"
+            aria-label="View notifications"
+          >
+            <img
+              className="absolute w-6 h-6 top-[7px] left-[7px]"
+              alt=""
+              src="/img/notification-01.svg"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      </header>
+
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        {messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-monochrome-600 font-body-text-body-3-regular text-center">
+              Start a conversation by typing a message below! 👋
+            </p>
+          </div>
+        )}
+        
+        {messages.map((message, index) => renderMessage(message, index))}
+        
+        {isTyping && <TypingIndicator />}
+        
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Chat Input */}
+      <div className="flex-shrink-0 px-6 py-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex h-[50px] items-center justify-between pl-4 pr-[3px] py-4 w-full bg-white rounded-[100px] border border-solid border-[#eeeeee] shadow-[0px_10px_20px_#a1a0ab26]"
+        >
+          <div className="inline-flex items-center gap-3 flex-1 mt-[-1.50px] mb-[-1.50px]">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              disabled={isInputDisabled}
+              placeholder="Ask me anything..."
+              className="flex-1 mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-600 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)] bg-transparent border-none outline-none disabled:opacity-50"
+              aria-label="Type your message"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isInputDisabled || !inputValue.trim()}
+            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            aria-label="Send message"
+          >
+            <div className="relative w-5 h-5 top-3 left-3 rotate-[180.00deg]">
+              <img
+                className="absolute w-2 h-[11px] top-1 left-1.5 rotate-[-180.00deg]"
+                alt=""
+                src="/img/arrow-right.png"
+                aria-hidden="true"
+              />
+            </div>
+          </button>
+        </form>
+      </div>
+
       {/* Bottom Navigation */}
       <nav
-        className="flex w-[377px] h-[82px] items-start justify-between px-6 py-0 absolute top-[731px] -left-px bg-white border-t [border-top-style:solid] border-[#e6e6e6]"
+        className="flex h-[82px] items-start justify-between px-6 py-0 bg-white border-t [border-top-style:solid] border-[#e6e6e6] flex-shrink-0"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -263,87 +344,6 @@ export const Conversational = (): JSX.Element => {
           </div>
         ))}
       </nav>
-
-      {/* Header */}
-      <header className="flex flex-col w-[375px] items-start absolute top-0 left-0">
-        <div className="relative self-stretch w-full h-11" />
-        <div className="flex items-center justify-between pt-3 pb-1.5 px-6 relative self-stretch w-full flex-[0_0_auto]">
-          <button
-            className="relative w-10 h-10 rounded-[20px] border border-solid border-[#d9d9d9]"
-            aria-label="Open menu"
-          >
-            <img
-              className="absolute w-6 h-6 top-[7px] left-[7px]"
-              alt=""
-              src="/img/menu-01.svg"
-              aria-hidden="true"
-            />
-          </button>
-          <button
-            className="relative w-10 h-10 rounded-[20px] border border-solid border-[#d9d9d9]"
-            aria-label="View notifications"
-          >
-            <img
-              className="absolute w-6 h-6 top-[7px] left-[7px]"
-              alt=""
-              src="/img/notification-01.svg"
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </header>
-
-      {/* Chat Input */}
-      <div className="flex flex-col w-[375px] items-start gap-2.5 px-6 py-0 absolute top-[639px] left-0">
-        <form
-          onSubmit={handleSubmit}
-          className="flex h-[50px] items-center justify-between pl-4 pr-[3px] py-4 relative self-stretch w-full bg-white rounded-[100px] border border-solid border-[#eeeeee] shadow-[0px_10px_20px_#a1a0ab26]"
-        >
-          <div className="inline-flex items-center gap-3 relative flex-[0_0_auto] mt-[-1.50px] mb-[-1.50px]">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              disabled={isInputDisabled}
-              placeholder="Ask me anything..."
-              className="relative w-fit mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-600 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] whitespace-nowrap [font-style:var(--body-text-body-3-regular-font-style)] bg-transparent border-none outline-none disabled:opacity-50"
-              aria-label="Type your message"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isInputDisabled || !inputValue.trim()}
-            className="relative w-11 h-11 mt-[-13.00px] mb-[-13.00px] bg-primary-950 rounded-[22px] disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Send message"
-          >
-            <div className="relative w-5 h-5 top-3 left-3 rotate-[180.00deg]">
-              <img
-                className="absolute w-2 h-[11px] top-1 left-1.5 rotate-[-180.00deg]"
-                alt=""
-                src="/img/arrow-right.png"
-                aria-hidden="true"
-              />
-            </div>
-          </button>
-        </form>
-      </div>
-
-      {/* Chat Messages */}
-      <div className="absolute top-[122px] left-0 w-[375px] h-[517px] overflow-y-auto px-6 space-y-4">
-        {messages.length === 0 && (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-monochrome-600 font-body-text-body-3-regular text-center">
-              Start a conversation by typing a message below! 👋
-            </p>
-          </div>
-        )}
-        
-        {messages.map((message, index) => renderMessage(message, index))}
-        
-        {isTyping && <TypingIndicator />}
-        
-        <div ref={messagesEndRef} />
-      </div>
     </main>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface MessageButton {
   id: string;
@@ -20,6 +20,8 @@ export const MessageWithButtons: React.FC<MessageWithButtonsProps> = ({
   onButtonClick,
   showAvatar = true,
 }) => {
+  const [selectedButton, setSelectedButton] = useState<string>("");
+
   const AIAvatar = () => (
     <div className="relative w-10 h-10 bg-[#e0f3f3] rounded-[83.33px]">
       <div className="h-10">
@@ -85,6 +87,77 @@ export const MessageWithButtons: React.FC<MessageWithButtonsProps> = ({
     </div>
   );
 
+  const handleButtonClick = (button: MessageButton) => {
+    setSelectedButton(button.id);
+    onButtonClick(button.action);
+  };
+
+  const renderButton = (button: MessageButton) => (
+    <button
+      key={button.id}
+      type="button"
+      onClick={() => handleButtonClick(button)}
+      className={`h-7 items-center gap-2.5 p-2.5 rounded-[100px] border border-solid inline-flex justify-center relative flex-[0_0_auto] transition-colors duration-200 hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-monochrome-200 focus:ring-offset-1 ${
+        selectedButton === button.id
+          ? "bg-monochrome-900 border-monochrome-900"
+          : "bg-white border-monochrome-200"
+      }`}
+      aria-pressed={selectedButton === button.id}
+      role="radio"
+      tabIndex={0}
+    >
+      <span
+        className={`relative w-fit mt-[-6.00px] mb-[-4.00px] font-body-text-body-4-regular font-[number:var(--body-text-body-4-regular-font-weight)] text-[length:var(--body-text-body-4-regular-font-size)] tracking-[var(--body-text-body-4-regular-letter-spacing)] leading-[var(--body-text-body-4-regular-line-height)] whitespace-nowrap [font-style:var(--body-text-body-4-regular-font-style)] ${
+          selectedButton === button.id ? "text-white" : "text-monochrome-900"
+        }`}
+      >
+        {button.text}
+      </span>
+    </button>
+  );
+
+  // Se há 4 botões ou menos, usa o layout em grid 2x2
+  if (buttons.length <= 4) {
+    return (
+      <div className="inline-flex items-end gap-3">
+        {showAvatar && <AIAvatar />}
+        <div className="flex flex-col w-[200px] items-center justify-center gap-2 px-4 py-3 relative bg-grey-50 rounded-2xl">
+          <div className="relative self-stretch mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-900 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
+            {content.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                {index < content.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </div>
+
+          <fieldset
+            className="contents"
+            role="radiogroup"
+            aria-labelledby="question"
+          >
+            <legend className="sr-only">Select an option</legend>
+
+            {buttons.length >= 2 && (
+              <div className="items-start gap-2 ml-[-8.50px] mr-[-8.50px] inline-flex justify-center relative flex-[0_0_auto]">
+                {renderButton(buttons[0])}
+                {renderButton(buttons[1])}
+              </div>
+            )}
+
+            {buttons.length >= 3 && (
+              <div className="items-start gap-2 ml-[-5.00px] mr-[-5.00px] inline-flex justify-center relative flex-[0_0_auto]">
+                {buttons[2] && renderButton(buttons[2])}
+                {buttons[3] && renderButton(buttons[3])}
+              </div>
+            )}
+          </fieldset>
+        </div>
+      </div>
+    );
+  }
+
+  // Para mais de 4 botões, usa layout diferente (como upgrade premium)
   return (
     <div className="inline-flex items-start gap-3">
       {showAvatar && <AIAvatar />}
@@ -100,38 +173,19 @@ export const MessageWithButtons: React.FC<MessageWithButtonsProps> = ({
           </div>
         </div>
         <div className="flex flex-col gap-3 px-4">
-          <div className="grid grid-cols-2 gap-3">
-            {buttons.slice(0, 4).map((button) => (
-              <button
-                key={button.id}
-                onClick={() => onButtonClick(button.action)}
-                className={`px-6 py-4 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 w-full border-2 ${
-                  button.variant === "primary" 
-                    ? "bg-primary-950 text-basewhite border-primary-950" 
-                    : "bg-basewhite text-monochrome-900 border-[#e0e0e0]"
-                }`}
-              >
-                {button.text}
-              </button>
-            ))}
-          </div>
-          {buttons.length > 4 && (
-            <div className="flex flex-col gap-3">
-              {buttons.slice(4).map((button) => (
-                <button
-                  key={button.id}
-                  onClick={() => onButtonClick(button.action)}
-                  className={`px-4 py-3 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 w-full ${
-                    button.variant === "primary" 
-                      ? "bg-primary-950 text-basewhite" 
-                      : "bg-basewhite text-monochrome-900 border border-[#e6e6e6]"
-                  }`}
-                >
-                  {button.text}
-                </button>
-              ))}
-            </div>
-          )}
+          {buttons.map((button) => (
+            <button
+              key={button.id}
+              onClick={() => handleButtonClick(button)}
+              className={`px-4 py-3 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 w-full ${
+                button.variant === "primary" 
+                  ? "bg-primary-950 text-basewhite" 
+                  : "bg-basewhite text-monochrome-900 border border-[#e6e6e6]"
+              }`}
+            >
+              {button.text}
+            </button>
+          ))}
         </div>
       </div>
     </div>

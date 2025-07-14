@@ -34,4 +34,11 @@
   --monochrome-600: rgba(130, 136, 160, 1);
   --monochrome-900: rgba(52, 54, 64, 1);
   --primary-950: rgba(0, 0, 0, 1);
+  --monochrome-200: rgba(200, 200, 200, 1);
+  --body-text-body-4-regular-font-family: "Helvetica Neue", Helvetica;
+  --body-text-body-4-regular-font-size: 12px;
+  --body-text-body-4-regular-font-style: normal;
+  --body-text-body-4-regular-font-weight: 400;
+  --body-text-body-4-regular-letter-spacing: -0.20px;
+  --body-text-body-4-regular-line-height: 18px;
 }

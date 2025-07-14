@@ -11,10 +11,13 @@ module.exports = {
         "monochrome-600": "var(--monochrome-600)",
         "monochrome-900": "var(--monochrome-900)",
         "primary-950": "var(--primary-950)",
+        "monochrome-200": "var(--monochrome-200)",
       },
       fontFamily: {
         "body-text-body-3-regular":
           "var(--body-text-body-3-regular-font-family)",
+        "body-text-body-4-regular":
+          "var(--body-text-body-4-regular-font-family)",
       },
     },
   },

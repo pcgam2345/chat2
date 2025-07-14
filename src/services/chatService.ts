@@ -3,16 +3,21 @@ import { BotResponse, MessageButton, GalleryImage, PhotoCard } from "../types/ch
 // Simulated bot responses with different types
 const botResponses: BotResponse[] = [
   {
-    content: "Hey, that sounds fun! 🎶✨\nI'd love to help you put together something stylish!\nBut first — to recommend the best looks for you, can I get to know your style profile a bit better?",
-    type: "text"
-  },
-  {
-    content: "Great! Let me help you with that. What would you like to do?",
+    content: "How tall are you?\n\nJust pick the one that's closest 👇",
     type: "buttons",
     buttons: [
-      { id: "1", text: "Generate visuals", action: "generate_visuals" },
-      { id: "2", text: "Style quiz", action: "style_quiz" },
-      { id: "3", text: "Browse looks", action: "browse_looks" }
+      { id: "1", text: "Under 150 cm", action: "height_under_150" },
+      { id: "2", text: "150-165 cm", action: "height_150_165" },
+      { id: "3", text: "165-175 cm", action: "height_165_175" },
+      { id: "4", text: "Over 175 cm", action: "height_over_175" }
+    ]
+  },
+  {
+    content: "Whoa, style superstar — you've maxed out your free creative sparks for today!\n\nOn the free plan, you get:\n\n✨ 5 image prompts/day\n🎥 1 video/day\n\nBut why stop there? Go Premium to unlock:\n\n🚀 50 images/day\n🎬 10 videos/day\n\nAll for just $5/month or $1.25/week.\n\nSubscribe now and keep your fashion magic flowing! ✨",
+    type: "buttons",
+    buttons: [
+      { id: "1", text: "Upgrade & Keep Styling", action: "upgrade_premium", variant: "primary" },
+      { id: "2", text: "I'll wait until tomorrow", action: "wait_tomorrow" }
     ]
   },
   {

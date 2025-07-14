@@ -1,10 +1,10 @@
 import React from "react";
-import { ButtonOption } from "./ButtonOption";
 
 interface MessageButton {
   id: string;
   text: string;
   action: string;
+  variant?: "primary" | "secondary";
 }
 
 interface MessageWithButtonsProps {
@@ -88,26 +88,50 @@ export const MessageWithButtons: React.FC<MessageWithButtonsProps> = ({
   return (
     <div className="inline-flex items-start gap-3">
       {showAvatar && <AIAvatar />}
-      <div className="flex flex-col gap-3 max-w-[250px]">
-        <div className="flex relative bg-grey-50 items-center justify-center px-4 py-3 rounded-2xl">
-          <p className="relative flex-1 mt-[-1.00px] font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-900 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
+      <div className="flex flex-col gap-4 max-w-[280px]">
+        <div className="flex relative bg-grey-50 items-start justify-start px-4 py-4 rounded-2xl">
+          <div className="relative flex-1 font-body-text-body-3-regular font-[number:var(--body-text-body-3-regular-font-weight)] text-monochrome-900 text-[length:var(--body-text-body-3-regular-font-size)] tracking-[var(--body-text-body-3-regular-letter-spacing)] leading-[var(--body-text-body-3-regular-line-height)] [font-style:var(--body-text-body-3-regular-font-style)]">
             {content.split('\n').map((line, index) => (
               <React.Fragment key={index}>
                 {line}
                 {index < content.split('\n').length - 1 && <br />}
               </React.Fragment>
             ))}
-          </p>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {buttons.map((button) => (
-            <ButtonOption
-              key={button.id}
-              text={button.text}
-              onClick={() => onButtonClick(button.action)}
-              variant="secondary"
-            />
-          ))}
+        <div className="flex flex-col gap-3 px-4">
+          <div className="grid grid-cols-2 gap-3">
+            {buttons.slice(0, 4).map((button) => (
+              <button
+                key={button.id}
+                onClick={() => onButtonClick(button.action)}
+                className={`px-4 py-3 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 ${
+                  button.variant === "primary" 
+                    ? "bg-primary-950 text-basewhite" 
+                    : "bg-basewhite text-monochrome-900 border border-[#e6e6e6]"
+                }`}
+              >
+                {button.text}
+              </button>
+            ))}
+          </div>
+          {buttons.length > 4 && (
+            <div className="flex flex-col gap-3">
+              {buttons.slice(4).map((button) => (
+                <button
+                  key={button.id}
+                  onClick={() => onButtonClick(button.action)}
+                  className={`px-4 py-3 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 w-full ${
+                    button.variant === "primary" 
+                      ? "bg-primary-950 text-basewhite" 
+                      : "bg-basewhite text-monochrome-900 border border-[#e6e6e6]"
+                  }`}
+                >
+                  {button.text}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

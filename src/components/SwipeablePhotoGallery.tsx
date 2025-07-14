@@ -161,18 +161,6 @@ export const SwipeablePhotoGallery: React.FC<SwipeablePhotoGalleryProps> = ({
           </div>
         ))}
       </div>
-      
-      {/* Indicadores de posição */}
-      <div className="flex justify-center mt-3 gap-1">
-        {photos.map((_, index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              index === currentIndex ? 'bg-blue600-primary' : 'bg-gray-300'
-            }`}
-          />
-        ))}
-      </div>
     </div>
   );
 };

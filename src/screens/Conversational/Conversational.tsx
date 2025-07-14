@@ -5,6 +5,7 @@ import { ChatBubble } from "../../components/ChatBubble";
 import { TypingIndicator } from "../../components/TypingIndicator";
 import { MessageWithButtons } from "../../components/MessageWithButtons";
 import { MessageWithGallery } from "../../components/MessageWithGallery";
+import { MessageWithSwipeableGallery } from "../../components/MessageWithSwipeableGallery";
 
 const navigationItems = [
   {
@@ -84,6 +85,7 @@ export const Conversational = (): JSX.Element => {
           messageType: response.type,
           buttons: response.buttons,
           images: response.images,
+          photos: response.photos,
         });
       } catch (error) {
         setIsTyping(false);
@@ -111,6 +113,7 @@ export const Conversational = (): JSX.Element => {
         messageType: response.type,
         buttons: response.buttons,
         images: response.images,
+        photos: response.photos,
       });
     } catch (error) {
       setIsTyping(false);
@@ -158,6 +161,16 @@ export const Conversational = (): JSX.Element => {
             key={message.id}
             content={message.content}
             images={message.images || []}
+            onTryNow={handleTryNow}
+            showAvatar={true}
+          />
+        );
+      case "swipeable-gallery":
+        return (
+          <MessageWithSwipeableGallery
+            key={message.id}
+            content={message.content}
+            photos={message.photos || []}
             onTryNow={handleTryNow}
             showAvatar={true}
           />

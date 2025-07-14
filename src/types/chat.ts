@@ -3,9 +3,10 @@ export interface ChatMessage {
   type: "user" | "ai";
   content: string;
   timestamp: Date;
-  messageType?: "text" | "buttons" | "gallery";
+  messageType?: "text" | "buttons" | "gallery" | "swipeable-gallery";
   buttons?: MessageButton[];
   images?: GalleryImage[];
+  photos?: PhotoCard[];
 }
 
 export interface MessageButton {
@@ -21,9 +22,17 @@ export interface GalleryImage {
   title?: string;
 }
 
+export interface PhotoCard {
+  id: string;
+  backgroundImage?: string;
+  customImage?: string;
+  hasOverflow?: boolean;
+}
+
 export interface BotResponse {
   content: string;
-  type: "text" | "buttons" | "gallery";
+  type: "text" | "buttons" | "gallery" | "swipeable-gallery";
   buttons?: MessageButton[];
   images?: GalleryImage[];
+  photos?: PhotoCard[];
 }

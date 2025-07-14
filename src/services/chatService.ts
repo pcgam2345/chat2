@@ -1,4 +1,4 @@
-import { BotResponse, MessageButton, GalleryImage } from "../types/chat";
+import { BotResponse, MessageButton, GalleryImage, PhotoCard } from "../types/chat";
 
 // Simulated bot responses with different types
 const botResponses: BotResponse[] = [
@@ -46,6 +46,31 @@ const botResponses: BotResponse[] = [
     ]
   },
   {
+    content: "Okay, cooking up some looks for you... 🔥\nStyling you up now...\n\nHere's your Day Explorer visual looks:\nSwipe through the vibe 📱👆",
+    type: "swipeable-gallery",
+    photos: [
+      {
+        id: "look1",
+        backgroundImage: "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=300",
+        hasOverflow: true
+      },
+      {
+        id: "look2", 
+        backgroundImage: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=300",
+        hasOverflow: true
+      },
+      {
+        id: "look3",
+        customImage: "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=300",
+        hasOverflow: true
+      },
+      {
+        id: "look4",
+        hasOverflow: false
+      }
+    ]
+  },
+  {
     content: "Perfect choice! That style would look amazing on you. Would you like me to suggest similar outfits or help you find where to shop for these pieces?",
     type: "buttons",
     buttons: [
@@ -81,20 +106,27 @@ export class ChatService {
     switch (action) {
       case "generate_visuals":
         return {
-          content: "Here are some visual inspirations for your concert look! 🎨",
-          type: "gallery",
-          images: [
+          content: "Okay, cooking up some looks for you... 🔥\nStyling you up now...\n\nHere's your Day Explorer visual looks:\nSwipe through the vibe 📱👆",
+          type: "swipeable-gallery",
+          photos: [
             {
-              id: "v1",
-              url: "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=300",
-              alt: "Visual inspiration 1",
-              title: "Bold & Edgy"
+              id: "visual1",
+              backgroundImage: "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
             },
             {
-              id: "v2",
-              url: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=300",
-              alt: "Visual inspiration 2", 
-              title: "Minimalist Cool"
+              id: "visual2",
+              backgroundImage: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
+            },
+            {
+              id: "visual3",
+              customImage: "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
+            },
+            {
+              id: "visual4",
+              hasOverflow: false
             }
           ]
         };
@@ -112,20 +144,27 @@ export class ChatService {
 
       case "browse_looks":
         return {
-          content: "Browse these trending concert looks! 🔥",
-          type: "gallery",
-          images: [
+          content: "Browse these trending concert looks! 🔥\nSwipe through the vibe 📱👆",
+          type: "swipeable-gallery",
+          photos: [
             {
-              id: "b1",
-              url: "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=300",
-              alt: "Trending look 1",
-              title: "Festival Ready"
+              id: "trend1",
+              backgroundImage: "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
             },
             {
-              id: "b2",
-              url: "https://images.pexels.com/photos/1040877/pexels-photo-1040877.jpeg?auto=compress&cs=tinysrgb&w=300",
-              alt: "Trending look 2",
-              title: "Concert Chic"
+              id: "trend2",
+              backgroundImage: "https://images.pexels.com/photos/1040877/pexels-photo-1040877.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
+            },
+            {
+              id: "trend3",
+              customImage: "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=300",
+              hasOverflow: true
+            },
+            {
+              id: "trend4",
+              hasOverflow: false
             }
           ]
         };

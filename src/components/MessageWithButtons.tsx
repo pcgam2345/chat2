@@ -105,10 +105,10 @@ export const MessageWithButtons: React.FC<MessageWithButtonsProps> = ({
               <button
                 key={button.id}
                 onClick={() => onButtonClick(button.action)}
-                className={`px-4 py-3 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 ${
+                className={`px-6 py-4 rounded-full text-sm font-body-text-body-3-regular transition-all duration-200 hover:opacity-80 w-full border-2 ${
                   button.variant === "primary" 
-                    ? "bg-primary-950 text-basewhite" 
-                    : "bg-basewhite text-monochrome-900 border border-[#e6e6e6]"
+                    ? "bg-primary-950 text-basewhite border-primary-950" 
+                    : "bg-basewhite text-monochrome-900 border-[#e0e0e0]"
                 }`}
               >
                 {button.text}
